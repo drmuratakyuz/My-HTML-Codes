@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letter Combinations</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Possible Letter Combinations</h2>
+    <div id="inputSection">
+        <p>Please enter the letters separated by commas:</p>
+        <input type="text" id="lettersInput" placeholder="For example: a,b,c">
+        <button onclick="processInput()">Submit</button>
+    </div>
+    <div id="lettersEntered"></div>
+    <div id="outputSection" style="display:none;">
+        <p id="outputMessage"></p>
+        <ul id="outputList"></ul>
+    </div>
+</div>
+
+<script>
+    let letters = [];
+    let combinations = [];
+
+    function processInput() {
+        const input = document.getElementById("lettersInput").value.trim();
+        if (input === "") {
+            alert("Please enter a valid input.");
+            return;
+        }
+
+        const letterArray = input.split(",").map(item => item.trim());
+        letters.push(letterArray);
+
+        document.getElementById("lettersInput").value = "";
+        displayEnteredLetters();
+        
+        if (letters.length === 1) {
+            document.getElementById("inputSection").innerHTML = `
+                <p>Please enter possibilities for the second letter (press enter twice to finish input):</p>
+                <input type="text" id="lettersInput" placeholder="For example: a,b,c">
+                <button onclick="processInput()">Submit</button>
+            `;
+        } else {
+            document.getElementById("inputSection").innerHTML = `
+                <p>Do you want to finish input?</p>
+                <button onclick="finishInput()">Yes</button>
+                <button onclick="continueInput()">No</button>
+            `;
+        }
+    }
+
+    function continueInput() {
+        document.getElementById("inputSection").innerHTML = `
+            <p>Enter possibilities for the ${letters.length + 1}. letter (press enter twice to finish input):</p>
+            <input type="text" id="lettersInput" placeholder="For example: a,b,c">
+            <button onclick="processInput()">Submit</button>
+        `;
+    }
+
+    function finishInput() {
+        if (letters.length < 2) {
+            alert("You must enter at least two groups of letters.");
+            return;
+        }
+
+        document.getElementById("inputSection").style.display = "none";
+        generateCombinations();
+        displayCombinations();
+    }
+
+    function displayEnteredLetters() {
+        const enteredLettersDiv = document.getElementById("lettersEntered");
+        enteredLettersDiv.innerHTML += `<p>Entered Letters: ${letters[letters.length - 1].join(", ")}</p>`;
+    }
+
+    function generateCombinations() {
+        combinations = letters.reduce((acc, val) => {
+            let result = [];
+            acc.forEach(item1 => {
+                val.forEach(item2 => {
+                    result.push(item1 + item2);
+                });
+            });
+            return result;
+        });
+    }
+
+    function displayCombinations() {
+        const outputSection = document.getElementById("outputSection");
+        const outputMessage = document.getElementById("outputMessage");
+        const outputList = document.getElementById("outputList");
+
+        outputMessage.textContent = "The combinations of the entered letters are as follows:";
+        combinations.forEach(combination => {
+            const listItem = document.createElement("li");
+            listItem.textContent = combination;
+            outputList.appendChild(listItem);
+        });
+
+        outputSection.style.display = "block";
+    }
+</script>
+</body>
+</html>
